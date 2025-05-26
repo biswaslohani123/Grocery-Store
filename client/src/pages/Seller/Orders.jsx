@@ -8,7 +8,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([])
 
   const fetchOrders = async () => {
-    setOrders(dummyOrders)  // set orders to dummyOrders, not dummyAddress
+    setOrders(dummyOrders)  
   }
 
   useEffect(() => {
