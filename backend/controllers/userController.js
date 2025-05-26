@@ -12,12 +12,12 @@ const RegisterUser = async (req, res) => {
             
         }
 
-        const existingUser = await userModel.find({email})
+        const existingUser = await userModel.findOne({email})
         if (existingUser) {
             return res.json({success: false , message: "user already exists"}); 
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await bcryptjs.hash(password, 10)
 
         const user = await userModel.create({name, email, password: hashedPassword})
 
@@ -38,3 +38,5 @@ const RegisterUser = async (req, res) => {
         
     }
 }
+
+export {RegisterUser}

@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import connectDB from './config/db.js'
 import 'dotenv/config'
+import userRouter from './routes/userRoute.js'
 
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -20,6 +21,9 @@ app.use(cors({origin: allowedOrigins, credentials: true}))
 app.get('/', (req, res) => {
     res.send("API WORKING")
 }) 
+
+//api endpoints
+app.use('/api/user', userRouter)
 
 app.listen(PORT, () => {
     
