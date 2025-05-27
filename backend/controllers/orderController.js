@@ -54,6 +54,22 @@ const getUserOrders = async (req, res) => {
 }
 
 // getAllOrders for Seller
+const getAllOrders = async (req, res) => {
+    try {
+        
+        const orders = await OrderModel.find({
+            userId,
+            $or : [{paymentType: "COD"}, {isPaid: true}]
+        }).populate("items.product address").sort({createdAt: -1})
+
+        res.json({success: true, orders})
 
 
-export {placeOrderCOD, getUserOrders}
+    } catch (error) {
+         console.log(error.message);
+        res.json({success: false, message: error.message})
+    }
+}
+
+
+export {placeOrderCOD, getUserOrders, getAllOrders}
