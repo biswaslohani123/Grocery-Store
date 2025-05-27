@@ -5,6 +5,7 @@ import cors from 'cors'
 import connectDB from './config/db.js'
 import 'dotenv/config'
 import userRouter from './routes/userRoute.js'
+import sellerRouter from './routes/sellerRoutes.js'
 
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 
 //api endpoints
 app.use('/api/user', userRouter)
+app.use('/api/seller', sellerRouter)
 
 app.listen(PORT, () => {
     
