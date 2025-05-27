@@ -1,16 +1,18 @@
 import express from 'express'
-
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import connectDB from './config/db.js'
 import 'dotenv/config'
 import userRouter from './routes/userRoute.js'
 import sellerRouter from './routes/sellerRoutes.js'
+import connectCloudinary from './config/cloudinary.js'
+import productRouter from './routes/productRoute.js'
 
 const app = express()
 const PORT = process.env.PORT || 4000
 
 await connectDB()
+await connectCloudinary()
 
 const allowedOrigins = ['http://localhost:5173']
 
@@ -26,6 +28,7 @@ app.get('/', (req, res) => {
 //api endpoints
 app.use('/api/user', userRouter)
 app.use('/api/seller', sellerRouter)
+app.use('/api/product', productRouter)
 
 app.listen(PORT, () => {
     
