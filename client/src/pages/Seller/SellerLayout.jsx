@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
 import { Link, NavLink, Outlet } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const SellerLayout = () => {
-  const { isSeller, setIsSeller } = useContext(AppContext);
+  const { isSeller, setIsSeller, navigate } = useContext(AppContext);
 
   const sidebarLinks = [
     { name: "Add product", path: "/seller", icon: assets.add_icon },
@@ -17,7 +19,20 @@ const SellerLayout = () => {
   ];
 
   const logout = async () => {
-    setIsSeller(false);
+    try {
+      const { data } = await axios.get("/api/seller/logout", {
+        withCredentials: true,
+      });
+
+      if (data.success) {
+        toast.success(data.message);
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -42,24 +57,25 @@ const SellerLayout = () => {
       </div>
       <div className="flex">
         <div className="md:w-64 w-16 border-r h-[95vh] text-base border-gray-300 pt-4 flex flex-col ">
-          {sidebarLinks.map((item ) => (
+          {sidebarLinks.map((item) => (
             <NavLink
               to={item.path}
               key={item.name}
-              end={item.path === '/seller'}
-              className={({isActive}) =>`flex items-center py-3 px-4 gap-3 
+              end={item.path === "/seller"}
+              className={({ isActive }) => `flex items-center py-3 px-4 gap-3 
                             {
-                              ${isActive
-                                ? "border-r-4 md:border-r-[6px] bg-indigo-500/10 border-primary text-primary"
-                                : "hover:bg-gray-100/90 border-white text-gray-700"
-                            }`}
+                              ${
+                                isActive
+                                  ? "border-r-4 md:border-r-[6px] bg-indigo-500/10 border-primary text-primary"
+                                  : "hover:bg-gray-100/90 border-white text-gray-700"
+                              }`}
             >
-             <img src={item.icon} alt="" className="w-7 h-7" />
+              <img src={item.icon} alt="" className="w-7 h-7" />
               <p className="md:block hidden text-center">{item.name}</p>
             </NavLink>
           ))}
         </div>
-        <Outlet/>
+        <Outlet />
       </div>
     </>
   );
