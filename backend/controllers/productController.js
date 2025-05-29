@@ -46,9 +46,9 @@ const ProductList = async (req, res) => {
 // productById get single product
 const ProductById = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         const products = await Product.findById(id)
-        res.json({ success: true, message: products })
+        res.json({ success: true,  products })
     } catch (error) {
         console.log(error.message);
         if (!res.headersSent) {
