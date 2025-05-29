@@ -1,27 +1,32 @@
-import { v2 as  cloudinary} from "cloudinary"
+import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/productModel.js"
 
 // add product
 const addProduct = async (req, res) => {
     try {
         let productData = JSON.parse(req.body.productData)
-
         const images = req.files
 
+        // Upload images to cloudinary
         let imageURL = await Promise.all(
             images.map(async (item) => {
-                let result = await cloudinary.uploader.upload(item.path, {resource_type: 'image'});
+                let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
                 return result.secure_url
             })
         )
 
-        await Product.create({...productData, image: imageURL})
-        res.json ({success: true, message: "Product Added"})
+        // Create product in database
+        await Product.create({ ...productData, image: imageURL })
+        
+        // Send success response - removed 'return' to avoid confusion
+        res.json({ success: true, message: "Product Added" })
 
     } catch (error) {
         console.log(error.message);
-        res.json({success: false, message: error.message})
-        
+        // Only send error response if no response has been sent yet
+        if (!res.headersSent) {
+            res.json({ success: false, message: error.message })
+        }
     }
 }
 
@@ -29,36 +34,41 @@ const addProduct = async (req, res) => {
 const ProductList = async (req, res) => {
     try {
         const products = await Product.find({})
-        res.json({success: true, message: products})
+        res.json({ success: true, message: products })
     } catch (error) {
-         console.log(error.message);
-         res.json({success: false, message: error.message})
+        console.log(error.message);
+        if (!res.headersSent) {
+            res.json({ success: false, message: error.message })
+        }
     }
-
 }
+
 // productById get single product
 const ProductById = async (req, res) => {
     try {
-        const {id} = req.body;
+        const { id } = req.body;
         const products = await Product.findById(id)
-        res.json({success: true, message: products})
-
-    } catch (error) {
-         console.log(error.message);
-         res.json({success: false, message: error.message})
-    }
-}
-// Change Stock
-const ChangeStock= async (req, res) => {
-    try {
-        const {id, inStock} = req.body;
-        await Product.findByIdAndUpdate(id, {inStock})
-        res.json({success: true, message: "Stock updated"})
+        res.json({ success: true, message: products })
     } catch (error) {
         console.log(error.message);
-         res.json({success: false, message: error.message})
+        if (!res.headersSent) {
+            res.json({ success: false, message: error.message })
+        }
     }
 }
 
+// Change Stock
+const ChangeStock = async (req, res) => {
+    try {
+        const { id, inStock } = req.body;
+        await Product.findByIdAndUpdate(id, { inStock })
+        res.json({ success: true, message: "Stock updated" })
+    } catch (error) {
+        console.log(error.message);
+        if (!res.headersSent) {
+            res.json({ success: false, message: error.message })
+        }
+    }
+}
 
-export {addProduct,ProductList, ProductById, ChangeStock}
+export { addProduct, ProductList, ProductById, ChangeStock }
